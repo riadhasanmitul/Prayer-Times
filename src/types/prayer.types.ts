@@ -1,5 +1,3 @@
-import type { CalculationMethodName, MadhabName } from './settings.types';
-
 export type PrayerName = 'Fajr' | 'Dhuhr' | 'Asr' | 'Maghrib' | 'Isha';
 export type RingerMode = 'silent' | 'vibrate' | 'normal';
 

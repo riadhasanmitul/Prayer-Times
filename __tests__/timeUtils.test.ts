@@ -1,4 +1,4 @@
-import { formatTime, formatCountdown, addMinutes, isSameDay, formatDate } from '../src/utils/timeUtils';
+import { formatTime, formatCountdown, addMinutes, isSameDay } from '../src/utils/timeUtils';
 
 describe('timeUtils', () => {
   describe('formatTime', () => {

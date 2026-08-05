@@ -1,4 +1,5 @@
-import type { RingerMode, PrayerName, ProfileId } from './prayer.types';
+import type { RingerMode, PrayerName } from './prayer.types';
+import type { ProfileId } from './settings.types';
 // Re-export ProfileId from prayer.types or define here
 
 export type AutomationTriggerType = 'wifi' | 'bluetooth' | 'gps';

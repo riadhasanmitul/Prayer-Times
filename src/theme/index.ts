@@ -59,3 +59,4 @@ export type AppThemeType = typeof AppDarkTheme;
 export { DarkColors, LightColors, PrayerColors } from './colors';
 export { spacing, borderRadius } from './spacing';
 export { typography } from './typography';
+export { useAppTheme } from './useAppTheme';

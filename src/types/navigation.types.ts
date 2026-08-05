@@ -1,6 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import type { PrayerName, ProfileId } from './prayer.types';
+import type { PrayerName } from './prayer.types';
+import type { ProfileId } from './settings.types';
 
 export type RootStackParamList = {
   Main: undefined;

@@ -1,17 +1,4 @@
-export type RootStackParamList = {
-  Main: undefined;
-  PrayerScheduleDetail: { prayerName: string };
-  AddCustomSchedule: { prayerName: string };
-  ProfileEditor: { profileId?: string };
-  Settings: undefined;
-  Permissions: undefined;
-  About: undefined;
-};
-
-export type MainTabParamList = {
-  Home: undefined;
-  Schedules: undefined;
-  Profiles: undefined;
-};
-
-export type MainTabScreenProps<T extends keyof MainTabParamList> = any;
+export * from './prayer.types';
+export * from './settings.types';
+export * from './profile.types';
+export * from './navigation.types';

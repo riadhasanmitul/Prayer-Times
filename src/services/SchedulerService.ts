@@ -93,7 +93,7 @@ export class SchedulerService {
     });
   }
 
-  async handlePrayerEnd(prayerName: PrayerName): Promise<void> {
+  async handlePrayerEnd(_prayerName: PrayerName): Promise<void> {
     const active = prayerRepository.getActiveSchedule();
     if (!active) return;
 
