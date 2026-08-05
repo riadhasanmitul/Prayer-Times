@@ -1,45 +1,44 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useEffect } from 'react';
+import { StatusBar, useColorScheme } from 'react-native';
+import { PaperProvider } from 'react-native-paper';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AppNavigator } from './src/navigation/AppNavigator';
+import { useAppTheme } from './src/theme/useAppTheme';
+import { useSettingsStore } from './src/store/settingsStore';
+import { useProfileStore } from './src/store/profileStore';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+function AppContent(): React.JSX.Element {
+  const { theme, isDark } = useAppTheme();
 
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
-}
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
+    <PaperProvider theme={theme}>
+      <StatusBar
+        translucent
+        backgroundColor="transparent"
+        barStyle={isDark ? 'light-content' : 'dark-content'}
       />
-    </View>
+      <AppNavigator />
+    </PaperProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+function App(): React.JSX.Element {
+  const loadSettings = useSettingsStore(state => state.loadSettings);
+  const loadProfiles = useProfileStore(state => state.loadProfiles);
+
+  useEffect(() => {
+    loadSettings();
+    loadProfiles();
+  }, []);
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <AppContent />
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
+  );
+}
 
 export default App;

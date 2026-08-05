@@ -1,97 +1,160 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Prayer Silencer 🕌
 
-# Getting Started
+**Automatically silence your phone during prayer times.**
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+A premium Android application built with React Native and TypeScript that automatically calculates prayer times based on your GPS location and silences your phone during prayer windows — inspired by Samsung Modes & Routines, specialized for Muslim prayer automation.
 
-## Step 1: Start Metro
+---
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Features
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- 🕌 **Offline Prayer Calculation** — Powered by the Adhan library, no internet required
+- 📍 **GPS-Based Location** — Automatic prayer times for your current location  
+- 🔇 **Smart Phone Silencer** — Automatically switches to Silent/Vibrate mode during prayer
+- 🔔 **Persistent Notification** — Shows active prayer + remaining time + "Restore Now" button
+- ⏰ **Custom Schedule Windows** — Add custom time offsets (e.g., "Asr: -10 min to +30 min")
+- 👤 **Profiles** — Home, Office, Mosque, Travel profiles with different settings
+- 🔄 **Sound Restore** — Restores previous ringer mode after prayer ends
+- 🛡️ **User Override Respect** — If you manually change sound during prayer, it respects your choice
+- 🔋 **Battery Optimized** — Uses AlarmManager + WorkManager for reliable background scheduling
+- 🌙 **Dark/Light/System Theme** — Material Design 3
 
-```sh
-# Using npm
-npm start
+---
 
-# OR using Yarn
-yarn start
+## Architecture
+
+```
+Prayer Silencer
+├── Presentation Layer
+│   ├── Screens (HomeScreen, SchedulesScreen, ProfilesScreen, SettingsScreen)
+│   ├── Components (PrayerCard, ActiveBanner, NextPrayerCard)
+│   └── Navigation (AppNavigator, TabBar)
+├── Domain Layer
+│   ├── Repositories (IPrayerRepository, IProfileRepository, ISettingsRepository)
+│   └── Use Cases (CalculatePrayerTimes, ScheduleAlarms, RestoreSound)
+├── Data Layer
+│   ├── MMKV Storage (MMKVStorage singleton)
+│   └── Repositories (PrayerRepository, ProfileRepository, SettingsRepository)
+├── Prayer Engine
+│   ├── PrayerCalculator (Adhan integration)
+│   ├── ScheduleCalculator (Window merging)
+│   └── SoundStateManager (Ringer control)
+├── Services
+│   ├── SchedulerService (AlarmManager orchestration)
+│   └── LocationService (GPS + permissions)
+├── State (Zustand)
+│   ├── prayerStore, profileStore, settingsStore
+└── Native Android (Kotlin)
+    ├── SilentModeModule (AudioManager bridge)
+    ├── AlarmSchedulerModule (AlarmManager bridge)
+    ├── PrayerForegroundService (Foreground service)
+    ├── AlarmReceiver, BootReceiver, TimeChangeReceiver
+    └── PrayerScheduleWorker (WorkManager daily reschedule)
 ```
 
-## Step 2: Build and run your app
+---
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+## Tech Stack
 
-### Android
+| Layer | Technology |
+|---|---|
+| Framework | React Native 0.86 |
+| Language | TypeScript (Strict) |
+| Navigation | React Navigation 7 |
+| UI | React Native Paper (Material Design 3) |
+| State | Zustand |
+| Storage | React Native MMKV |
+| Prayer Times | Adhan |
+| Location | React Native Geolocation Service |
+| Animations | React Native Reanimated 3 |
+| Background | Android AlarmManager + WorkManager |
+| Native Bridge | Kotlin Native Modules |
 
-```sh
-# Using npm
+---
+
+## Prerequisites
+
+- Node.js 20+
+- Java Development Kit (JDK) 17
+- Android Studio with Android SDK
+- Android SDK API 24+ (minSdk 24, targetSdk 34)
+
+---
+
+## Quick Start
+
+```bash
+git clone https://github.com/YOUR_USERNAME/prayer-silencer.git
+cd prayer-silencer
+npm install
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
+---
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+## Build APK
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### Debug APK
 
-```sh
-bundle install
+```bash
+cd android && ./gradlew assembleDebug
+# APK at: android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Then, and every time you update your native dependencies, run:
+### Release APK
 
-```sh
-bundle exec pod install
+```bash
+# Generate keystore first:
+keytool -genkey -v -keystore prayer-silencer.keystore -alias prayer-silencer-key -keyalg RSA -keysize 2048 -validity 10000
+
+# Build release:
+cd android && ./gradlew assembleRelease
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+### Cloud Build (GitHub Actions)
 
-```sh
-# Using npm
-npm run ios
+Push to GitHub — the `.github/workflows/build-android.yml` workflow automatically builds an APK as an artifact on every push. Create a GitHub Release with:
 
-# OR using Yarn
-yarn ios
+```bash
+git tag v1.0.0 && git push origin v1.0.0
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+---
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## Android Permissions
 
-## Step 3: Modify your app
+| Permission | Purpose |
+|---|---|
+| ACCESS_FINE_LOCATION | GPS for prayer time calculation |
+| ACCESS_NOTIFICATION_POLICY | Control Do Not Disturb mode |
+| MODIFY_AUDIO_SETTINGS | Set ringer to silent/vibrate |
+| FOREGROUND_SERVICE | Active prayer notification |
+| RECEIVE_BOOT_COMPLETED | Reschedule alarms after reboot |
+| SCHEDULE_EXACT_ALARM | Precise prayer time alarms |
+| POST_NOTIFICATIONS | Prayer notifications (Android 13+) |
 
-Now that you have successfully run the app, let's make changes!
+---
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## Prayer Calculation Methods
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+- University of Islamic Sciences, Karachi (Default)
+- Muslim World League
+- Egyptian General Authority
+- Moonsighting Committee Worldwide (ISNA)
+- Dubai, Kuwait, Qatar, Singapore, Tehran, Turkey
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+---
 
-## Congratulations! :tada:
+## Privacy
 
-You've successfully run and modified your React Native App. :partying_face:
+- No analytics, no tracking, no user data collection
+- No server required — fully offline
+- Location stays on device
 
-### Now what?
+---
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+## Acknowledgments
 
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- [Adhan](https://github.com/batoulapps/adhan-js) — Prayer time calculation by Batoul Apps
+- [React Native Paper](https://callstack.github.io/react-native-paper/) — MD3 components
+- [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/) — Animations
