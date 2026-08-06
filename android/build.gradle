@@ -1,25 +1,32 @@
 buildscript {
-    ext {
-        buildToolsVersion = "35.0.0"
-        minSdkVersion = 24
-        compileSdkVersion = 35
-        targetSdkVersion = 35
-        ndkVersion = "27.1.12297006"
-        kotlinVersion = "2.1.20"
-    }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.12.0")
-        // NOTE: react-native-gradle-plugin is resolved via pluginManagement { includeBuild }
-        // in settings.gradle — do NOT add it here, it does not exist on Maven Central
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.20")
+        // react-native-gradle-plugin is NOT on Maven Central.
+        // It is resolved via pluginManagement { includeBuild } in settings.gradle
+        // and applied via the plugins {} block below.
     }
 }
 
-apply plugin: "com.facebook.react.rootproject"
+// plugins {} block uses pluginManagement (which has includeBuild) to resolve plugins.
+// This is the correct mechanism for react-native-gradle-plugin in RN 0.73+.
+plugins {
+    id "com.facebook.react.rootproject"
+}
+
+// Expose SDK versions to subprojects via rootProject.ext
+ext {
+    buildToolsVersion = "35.0.0"
+    minSdkVersion    = 24
+    compileSdkVersion= 35
+    targetSdkVersion = 35
+    ndkVersion       = "27.1.12297006"
+    kotlinVersion    = "2.1.20"
+}
 
 allprojects {
     repositories {
