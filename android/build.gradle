@@ -13,7 +13,8 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.12.0")
-        classpath("com.facebook.react:react-native-gradle-plugin")
+        // NOTE: react-native-gradle-plugin is resolved via pluginManagement { includeBuild }
+        // in settings.gradle — do NOT add it here, it does not exist on Maven Central
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
